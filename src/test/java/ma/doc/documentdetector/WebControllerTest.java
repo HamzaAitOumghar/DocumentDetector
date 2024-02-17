@@ -27,27 +27,38 @@ class WebControllerTest {
 
     @Test
     void fakeImageFileShouldReturnFalse() throws Exception {
-        MockMultipartFile mockMultipartFile = buildMockMultiPartFile("images/fake_image.png",MediaType.IMAGE_PNG_VALUE);
+        MockMultipartFile mockMultipartFile = buildMockMultiPartFile("images/fake_image.png");
 
         mockMvc.perform(MockMvcRequestBuilders.multipart(API_URL).file(mockMultipartFile))
-                .andExpect(MockMvcResultMatchers.status().isOk()).
-                andExpect(MockMvcResultMatchers.jsonPath("isSafe").value(false));
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("isSafe").value(false));
 
     }
 
     @Test
     void reelImageFileShouldReturnTrue() throws Exception {
-        MockMultipartFile mockMultipartFile = buildMockMultiPartFile("images/reel_image.png",MediaType.IMAGE_PNG_VALUE);
+        MockMultipartFile mockMultipartFile = buildMockMultiPartFile("images/reel_image.png");
 
         mockMvc.perform(MockMvcRequestBuilders.multipart(API_URL).file(mockMultipartFile))
-                .andExpect(MockMvcResultMatchers.status().isOk()).
-                andExpect(MockMvcResultMatchers.jsonPath("isSafe").value(true));
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("isSafe").value(true));
 
     }
 
-    private static MockMultipartFile buildMockMultiPartFile(String path, String mediaType) throws IOException {
+    @Test
+    void excelFileWithVbaScriptShouldReturnFalse() throws Exception {
+        MockMultipartFile mockMultipartFile = buildMockMultiPartFile("excel/excel_vba.xlsx");
+
+        mockMvc.perform(MockMvcRequestBuilders.multipart(API_URL).file(mockMultipartFile))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("isSafe").value(false));
+
+    }
+
+
+    private static MockMultipartFile buildMockMultiPartFile(String path) throws IOException {
         ClassPathResource classPathResource = new ClassPathResource(path);
-        return new MockMultipartFile("file", classPathResource.getFilename(), mediaType, FileCopyUtils.copyToByteArray(classPathResource.getInputStream()));
+        return new MockMultipartFile("file", classPathResource.getFilename(), MediaType.MULTIPART_FORM_DATA_VALUE, FileCopyUtils.copyToByteArray(classPathResource.getInputStream()));
     }
 
 }
