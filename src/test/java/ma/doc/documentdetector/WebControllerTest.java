@@ -46,8 +46,19 @@ class WebControllerTest {
     }
 
     @Test
-    void excelFileWithVbaScriptShouldReturnFalse() throws Exception {
-        MockMultipartFile mockMultipartFile = buildMockMultiPartFile("excel/excel_vba.xlsx");
+    void simpleExcelFileShouldReturnTrue() throws Exception {
+        MockMultipartFile mockMultipartFile = buildMockMultiPartFile("excel/excel_normal.xlsx");
+
+        mockMvc.perform(MockMvcRequestBuilders.multipart(API_URL).file(mockMultipartFile))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("isSafe").value(true));
+
+    }
+
+
+    @Test
+    void excelFileWithOleObjectShouldReturnFalse() throws Exception {
+        MockMultipartFile mockMultipartFile = buildMockMultiPartFile("excel/excel_ole_object.xlsx");
 
         mockMvc.perform(MockMvcRequestBuilders.multipart(API_URL).file(mockMultipartFile))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -55,6 +66,43 @@ class WebControllerTest {
 
     }
 
+    @Test
+    void fakeExcelFileShouldReturnFalse() throws Exception {
+        MockMultipartFile mockMultipartFile = buildMockMultiPartFile("excel/fake_excel.xls");
+
+        mockMvc.perform(MockMvcRequestBuilders.multipart(API_URL).file(mockMultipartFile))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("isSafe").value(false));
+
+    }
+
+
+    @Test
+    void simplePdfFileShouldReturnTrue() throws Exception {
+        MockMultipartFile mockMultipartFile = buildMockMultiPartFile("pdf/reel_pdf.pdf");
+        mockMvc.perform(MockMvcRequestBuilders.multipart(API_URL).file(mockMultipartFile))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("isSafe").value(true));
+
+    }
+
+    @Test
+    void fakePdfFileShouldReturnFalse() throws Exception {
+        MockMultipartFile mockMultipartFile = buildMockMultiPartFile("pdf/fake_pdf.pdf");
+        mockMvc.perform(MockMvcRequestBuilders.multipart(API_URL).file(mockMultipartFile))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("isSafe").value(false));
+
+    }
+
+    @Test
+    void pdfFileWithJsShouldReturnFalse() throws Exception {
+        MockMultipartFile mockMultipartFile = buildMockMultiPartFile("pdf/pdf_with_js.pdf");
+        mockMvc.perform(MockMvcRequestBuilders.multipart(API_URL).file(mockMultipartFile))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("isSafe").value(false));
+
+    }
 
     private static MockMultipartFile buildMockMultiPartFile(String path) throws IOException {
         ClassPathResource classPathResource = new ClassPathResource(path);

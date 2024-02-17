@@ -39,9 +39,9 @@ public class ExcelDocumentDetector implements DocumentDetector {
             }
 
             if (isXlsFile(originalFilename)) {
-                return existOLEObjectsOrMacrosInXLS(fileBytes);
+                return !existOLEObjectsOrMacrosInXLS(fileBytes);
             } else if (isXlsxFile(originalFilename)) {
-                return existOLEObjectsOrMacrosInXLSX(fileBytes);
+                return !existOLEObjectsOrMacrosInXLSX(fileBytes);
             }
 
             return false;
